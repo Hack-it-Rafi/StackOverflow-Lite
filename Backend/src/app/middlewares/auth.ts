@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import httpStatus from 'http-status';
+// import httpStatus from 'http-status';
 import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import config from '../config';
 import AppError from '../errors/AppError';
@@ -11,7 +11,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
     if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+      throw new AppError(401, 'You are not authorized!');
     }
 
     try {
@@ -24,11 +24,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
       const user = await User.findOne({ email: email });
       if (!user) {
-        throw new AppError(httpStatus.UNAUTHORIZED, 'User not found!');
+        throw new AppError(401, 'User not found!');
       }
 
       if (requiredRoles.length && !requiredRoles.includes(user.role)) {
-        throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
+        throw new AppError(403, 'You are not authorized!');
       }
 
       req.user = user;
@@ -37,11 +37,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new AppError(
-          httpStatus.UNAUTHORIZED,
+          403,
           'Token expired. Please log in again.',
         );
       }
-      throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid token.');
+      throw new AppError(401, 'Invalid token.');
     }
   });
 };
