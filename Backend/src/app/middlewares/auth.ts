@@ -4,10 +4,10 @@ import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import config from '../config';
 import AppError from '../errors/AppError';
 import catchAsync from '../utils/catchAsync';
-import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
 
-const auth = (...requiredRoles: TUserRole[]) => {
+// const auth = (...requiredRoles: TUserRole[]) => {
+const auth = () => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
     if (!token) {
@@ -27,9 +27,9 @@ const auth = (...requiredRoles: TUserRole[]) => {
         throw new AppError(401, 'User not found!');
       }
 
-      if (requiredRoles.length && !requiredRoles.includes(user.role)) {
-        throw new AppError(403, 'You are not authorized!');
-      }
+      // if (requiredRoles.length && !requiredRoles.includes(user.role)) {
+      //   throw new AppError(403, 'You are not authorized!');
+      // }
 
       req.user = user;
 

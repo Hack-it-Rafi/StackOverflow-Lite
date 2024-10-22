@@ -24,22 +24,6 @@ const userSchema = new Schema<TUser>(
       default: 'Ujjal123',
       select: 0,
     },
-    passwordChangedAt: {
-      type: Date,
-    },
-    needsPasswordChange: {
-      type: Boolean,
-      default: true,
-    },
-    role: {
-      type: String,
-      enum: ['editor', 'admin'],
-      default: 'editor',
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true,

@@ -6,7 +6,7 @@ const addUserSchema = z.object({
         name: z.string(),
         phone: z.string(),
         password: z.string().optional(),
-        role: z.enum(['admin', 'editor']).optional()
+        // role: z.enum(['admin', 'editor']).optional()
     })
 })
 

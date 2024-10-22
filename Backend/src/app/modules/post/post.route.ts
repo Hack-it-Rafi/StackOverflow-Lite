@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.post(
   '/create-Post',
-  auth('admin'),
+  auth(),
   validateRequest(PostValidations.createPostValidationSchema),
   PostControllers.createPost,
 );
 
-router.get('/:id', auth('admin', 'editor'), PostControllers.getSinglePost);
+router.get('/:id', auth(), PostControllers.getSinglePost);
 
 // router.patch(
 //   '/:id',
@@ -25,6 +25,6 @@ router.get('/:id', auth('admin', 'editor'), PostControllers.getSinglePost);
 // router.delete('/:id', auth('admin'), PostControllers.deletePost);
 
 
-router.get('/', auth('admin', 'editor'), PostControllers.getAllPosts);
+router.get('/', auth(), PostControllers.getAllPosts);
 
 export const PostRoutes = router;

@@ -8,34 +8,34 @@ const router = express.Router();
 
 router.post(
   '/create-User',
-  auth('admin'),
+  auth(),
   validateRequest(UserValidation.addUserSchema),
   UserControllers.createUser,
 );
 
 router.get(
   '/:id',
-  auth('admin', 'editor'),
+  auth(),
   UserControllers.getSingleUser,
 );
 
 router.get(
   '/',
-  auth('admin', 'editor'),
+  auth(),
   UserControllers.getAllUsers,
 );
 
-router.patch(
-  '/:userId',
-  auth('admin'),
-  validateRequest(UserValidation.updateUserSchema),
-  UserControllers.updateUser,
-);
+// router.patch(
+//   '/:userId',
+//   auth('admin'),
+//   validateRequest(UserValidation.updateUserSchema),
+//   UserControllers.updateUser,
+// );
 
-router.delete(
-  '/:userId',
-   auth('admin'),
-  UserControllers.deleteUser,
-);
+// router.delete(
+//   '/:userId',
+//    auth('admin'),
+//   UserControllers.deleteUser,
+// );
 
 export const UserRoutes = router;

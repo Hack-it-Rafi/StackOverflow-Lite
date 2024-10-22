@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.post(
   '/create-Notification',
-  auth('admin'),
+  auth(),
   validateRequest(NotificationValidations.createNotificationValidationSchema),
   NotificationControllers.createNotification,
 );
 
-router.get('/:id', auth('admin', 'editor'), NotificationControllers.getSingleNotification);
+router.get('/:id', auth(), NotificationControllers.getSingleNotification);
 
 // router.patch(
 //   '/:id',
@@ -25,6 +25,6 @@ router.get('/:id', auth('admin', 'editor'), NotificationControllers.getSingleNot
 // router.delete('/:id', auth('admin'), NotificationControllers.deleteNotification);
 
 
-router.get('/', auth('admin', 'editor'), NotificationControllers.getAllNotifications);
+router.get('/', auth(), NotificationControllers.getAllNotifications);
 
 export const NotificationRoutes = router;
