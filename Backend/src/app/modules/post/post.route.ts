@@ -19,5 +19,6 @@ router.post(
 
 router.get('/:id', PostControllers.getSinglePost);
 router.get('/', PostControllers.getAllPosts);
+router.get('/file/:fileName', PostControllers.getPostFile);
 
 export const PostRoutes = router;

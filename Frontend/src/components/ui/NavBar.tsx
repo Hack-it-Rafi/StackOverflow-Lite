@@ -65,7 +65,7 @@ const NavBar: React.FC = () => {
     <div className="navbar bg-base-100 py-5">
       <div className="navbar-start">
         <div className="w-36">
-          <img className="w-full" src="./logo.png" alt="" />
+          <img className="w-full" src="/logo.png" alt="" />
         </div>
       </div>
       <div className="form-control"></div>

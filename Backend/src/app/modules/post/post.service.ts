@@ -61,23 +61,8 @@ const getSinglePostFromDB = async (id: string) => {
   return result;
 };
 
-// const updatePostInDB = async (id: string, payload: Partial<TPost>) => {
-//   const result = await Post.findByIdAndUpdate(id, payload, {
-//     new: true,
-//     runValidators: true,
-//   });
-//   return result;
-// };
-
-// const deletePostFromDB = async (id: string) => {
-//   const result = await Post.findByIdAndDelete(id);
-//   return result;
-// };
-
 export const PostServices = {
   createPostIntoDB,
   getAllPostsFromDB,
   getSinglePostFromDB,
-  //   updatePostInDB,
-  //   deletePostFromDB,
 };

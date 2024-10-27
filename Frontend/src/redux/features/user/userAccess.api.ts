@@ -28,7 +28,15 @@ const userAccessApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["singlePost"],
+    }),
+
+    getPostFile: builder.query({
+      query: (fileName: string) => {
+        return {
+          url: `/post/file/${fileName}`,
+          method: "GET",
+        };
+      },
     }),
 
     createPost: builder.mutation({
@@ -55,6 +63,7 @@ const userAccessApi = baseApi.injectEndpoints({
 export const {
   useGetAllPostsQuery,
   useGetSinglePostQuery,
+  useGetPostFileQuery,
   useGetAllNotificationsQuery,
   useCreatePostMutation,
   

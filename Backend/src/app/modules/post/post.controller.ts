@@ -2,7 +2,11 @@
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { PostServices } from './post.service';
-import { uploadToMinIO } from './post.utility';
+import { getObjectFromMinIO, uploadToMinIO } from './post.utility';
+
+
+const bucketName = 'stackoverflow-files';
+
 
 const createPost = catchAsync(async (req, res) => {
   const { file } = req;
@@ -11,13 +15,13 @@ const createPost = catchAsync(async (req, res) => {
   }
 
   // Upload file to MinIO
-  const bucketName = 'stackoverflow-files';
+  
 
   try {
     await uploadToMinIO(bucketName, file);
     const postData = {
       ...req.body,
-      fileUrl: `/${bucketName}/${file.originalname}`, // Store file path in DB if needed
+      fileUrl: `/${bucketName}/${file.originalname}`, 
     };
     const result = await PostServices.createPostIntoDB(postData);
 
@@ -56,36 +60,20 @@ const getSinglePost = catchAsync(async (req, res) => {
   });
 });
 
-// const updatePost = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   const result = await PostServices.updatePostInDB(id, req.body);
-
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Post is updated successfully',
-//     data: result,
-//   });
-// });
-
-// const deletePost = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   const result = await PostServices.deletePostFromDB(id);
-
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Post is deleted successfully',
-//     data: result,
-//   });
-// });
-
-
+const getPostFile = catchAsync(async (req, res) => {
+  
+  const { fileName } = req.params;
+  try {
+      const content = await getObjectFromMinIO(bucketName, fileName);
+      res.status(200).json({ filename: fileName, content: content });
+  } catch (error) {
+      res.status(500).json({ message: "Could not retrieve file.", error: error.message });
+  }
+});
 
 export const PostControllers = {
   createPost,
   getSinglePost,
   getAllPosts,
-//   updatePost,
-//   deletePost,
+  getPostFile
 };
