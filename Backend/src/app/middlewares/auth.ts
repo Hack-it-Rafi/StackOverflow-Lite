@@ -9,7 +9,7 @@ import { User } from '../modules/user/user.model';
 // const auth = (...requiredRoles: TUserRole[]) => {
 const auth = () => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.token;
+    const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       throw new AppError(401, 'You are not authorized!');
     }

@@ -1,6 +1,6 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
-import auth from '../../middlewares/auth';
+// import auth from '../../middlewares/auth';
 import { NotificationValidations } from './notification.validation';
 import { NotificationControllers } from './notification.controller';
 
@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.post(
   '/create-Notification',
-  auth(),
+  
   validateRequest(NotificationValidations.createNotificationValidationSchema),
   NotificationControllers.createNotification,
 );
 
-router.get('/:id', auth(), NotificationControllers.getSingleNotification);
+router.get('/:id', NotificationControllers.getSingleNotification);
 
 // router.patch(
 //   '/:id',
@@ -25,6 +25,6 @@ router.get('/:id', auth(), NotificationControllers.getSingleNotification);
 // router.delete('/:id', auth('admin'), NotificationControllers.deleteNotification);
 
 
-router.get('/', auth(), NotificationControllers.getAllNotifications);
+router.get('/', NotificationControllers.getAllNotifications);
 
 export const NotificationRoutes = router;

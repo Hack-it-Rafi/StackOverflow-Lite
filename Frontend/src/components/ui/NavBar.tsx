@@ -1,6 +1,66 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Popover } from 'antd';
+import { useGetAllNotificationsQuery } from "../../redux/features/user/userAccess.api";
+import { debounce } from "lodash";
 
 const NavBar: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation(); // Hook to get the current location
+  
+  const handleCreatePost = () => {
+    navigate(`/create-post`);
+  };
+
+  const { data, refetch } = useGetAllNotificationsQuery(undefined);
+
+  const debouncedFetch = useCallback(
+    debounce(() => {
+      refetch();
+    }, 5000),
+    [ refetch]
+  );
+
+  useEffect(() => {
+    debouncedFetch();
+    return () => {
+      debouncedFetch.cancel();
+    };
+  }, [debouncedFetch]);
+
+  const handleRedirect = (id) => {
+    navigate(`/post/${id}`);
+  };
+
+  const content = (
+    <div
+      className="w-80 max-h-80 overflow-y-auto"
+      style={{
+        scrollbarWidth: "none", // Firefox
+        msOverflowStyle: "none", // IE 10+
+      }}
+    >
+      <style>
+        {`
+          .w-80::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      <div className="flex flex-col gap-3">
+        {data?.data?.map((item) => (
+          <button key={item._id} onClick={()=>{handleRedirect(item.postId._id)}}>
+            <div>
+            <span className="font-semibold">{`${item.postId.userEmail}`}</span>
+            <span> asked: </span>
+            <span className="font-semibold">{`${item.headLine}`}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="navbar bg-base-100 py-5">
       <div className="navbar-start">
@@ -8,15 +68,19 @@ const NavBar: React.FC = () => {
           <img className="w-full" src="./logo.png" alt="" />
         </div>
       </div>
-      <div className="form-control">
-        <input
-          type="text"
-          placeholder="Search Post"
-          className="input input-bordered w-24 md:w-96 h-10"
-        />
-      </div>
+      <div className="form-control"></div>
       <div className="navbar-end gap-10">
-        <button className="btn btn-ghost btn-circle">
+        {location.pathname !== "/create-post" && (
+          <button
+            onClick={handleCreatePost}
+            className="btn btn-primary"
+          >
+            Create Post
+          </button>
+        )}
+       
+        <Popover placement="bottom" content={content}>
+          <button className="btn btn-ghost btn-circle">
           <div className="indicator">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -34,14 +98,21 @@ const NavBar: React.FC = () => {
             </svg>
             <span className="badge badge-xs badge-primary indicator-item"></span>
           </div>
-        </button>
-        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-        <div className="w-10 rounded-full">
-          <img
-            alt="Tailwind CSS Navbar component"
-            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+          </button>
+        </Popover>
+
+        <div
+          tabIndex={0}
+          role="button"
+          className="btn btn-ghost btn-circle avatar"
+        >
+          <div className="w-10 rounded-full">
+            <img
+              alt="Tailwind CSS Navbar component"
+              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+            />
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

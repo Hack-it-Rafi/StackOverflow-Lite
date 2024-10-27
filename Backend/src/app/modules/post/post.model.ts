@@ -13,6 +13,10 @@ const postSchema = new Schema<TPost>(
       trim: true,
       required: true,
     },
+    fileUrl: {
+      type: String,
+      trim: true,
+    },
     userEmail: {
       type: String,
       trim: true,

@@ -1,0 +1,61 @@
+
+import { TQueryParam } from "../../../types/global.types";
+import { baseApi } from "../../api/baseApi";
+
+const userAccessApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getAllPosts: builder.query({
+      query: (args) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item: TQueryParam) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+
+        return {
+          url: "/post",
+          method: "GET",
+          params: params,
+        };
+      },
+    }),
+
+    getSinglePost: builder.query({
+      query: (roomId: string) => {
+        return {
+          url: `/post/${roomId}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["singlePost"],
+    }),
+
+    createPost: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/post/create-Post",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["posts"],
+    }),
+
+    getAllNotifications: builder.query({
+      query: (args?) => ({
+        url: "/notification",
+        method: "GET",
+      }),
+    }),
+    
+  }),
+});
+
+export const {
+  useGetAllPostsQuery,
+  useGetSinglePostQuery,
+  useGetAllNotificationsQuery,
+  useCreatePostMutation,
+  
+} = userAccessApi;

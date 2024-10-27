@@ -1,30 +1,23 @@
 import express from 'express';
+import multer from 'multer';
 import validateRequest from '../../middlewares/validateRequest';
-import auth from '../../middlewares/auth';
 import { PostControllers } from './post.controller';
 import { PostValidations } from './post.validation';
 
 const router = express.Router();
 
+// Use memory storage to avoid saving the file permanently
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 router.post(
   '/create-Post',
-  auth(),
+  upload.single('file'), // Specify the field name to be 'file'
   validateRequest(PostValidations.createPostValidationSchema),
   PostControllers.createPost,
 );
 
-router.get('/:id', auth(), PostControllers.getSinglePost);
-
-// router.patch(
-//   '/:id',
-//   auth('admin', 'editor'),
-//   validateRequest(PostValidations.updatePostValidationSchema),
-//   PostControllers.updatePost,
-// );
-
-// router.delete('/:id', auth('admin'), PostControllers.deletePost);
-
-
-router.get('/', auth(), PostControllers.getAllPosts);
+router.get('/:id', PostControllers.getSinglePost);
+router.get('/', PostControllers.getAllPosts);
 
 export const PostRoutes = router;

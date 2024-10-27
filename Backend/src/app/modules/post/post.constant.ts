@@ -1,4 +1,4 @@
-export const PostSearchableFields = ['content', 'userEmail'];
+export const PostSearchableFields = ['content', 'userEmail', 'headLine'];
 
 // export const Order_Status = {
 //     processing: 'processing',

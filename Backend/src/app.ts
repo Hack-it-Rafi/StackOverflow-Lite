@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 // import smsRouter from './sms/smsRoutes';
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://ujjal-purchase-log.vercel.app'],
+  origin: ['http://localhost:5173',],
   credentials: true,
 };
 
@@ -46,7 +46,7 @@ app.post('/api/v1/jwt', async (req: Request, res: Response) => {
 });
 
 app.use("/", async (req: Request, res: Response) => {
-  res.send("Ujjal Purchase Log running");
+  res.send("StackOverflow Log running");
 })
 
 app.post('/api/v1/logout', async (req: Request, res: Response) => {
