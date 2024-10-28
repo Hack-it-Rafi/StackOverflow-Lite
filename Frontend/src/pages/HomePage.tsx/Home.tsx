@@ -3,10 +3,15 @@ import { useGetAllPostsQuery } from "../../redux/features/user/userAccess.api";
 import { debounce } from "lodash";
 import PostCard from "../../components/ui/PostCard";
 import { Input } from "antd";
+import { useAppSelector } from "../../redux/hooks";
+import { useCurrentUser } from "../../redux/features/auth/authSlice";
 
 const Home = () => {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const user = useAppSelector(useCurrentUser);
+
+  // console.log(user?.userEmail);
 
   const queryParams = [
     { name: "page", value: 1 },
@@ -52,7 +57,10 @@ const Home = () => {
         />
       </div>
       <div className="flex flex-col gap-10 max-w-4xl mx-auto">
-        {data?.data?.map((item) => (
+        {data?.data?.filter(
+            (item) =>
+              item.userEmail!==user?.userEmail
+          ).map((item) => (
           <PostCard key={item._id} item={item}></PostCard>
         ))}
       </div>

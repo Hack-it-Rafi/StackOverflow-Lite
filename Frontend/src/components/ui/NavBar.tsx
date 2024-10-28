@@ -97,7 +97,7 @@ const NavBar: React.FC = () => {
         {data?.data
           ?.filter(
             (item) =>
-              !item.seenUser.includes(user?.userId) || item.isDeleted === false
+              (!item.seenUser.includes(user?.userId) || item.isDeleted === false)&&item.postId.userEmail!==user?.userEmail
           )
           .map((item) => (
             <button
@@ -159,15 +159,15 @@ const NavBar: React.FC = () => {
       </div>
       <div className="navbar-end gap-10">
         {location.pathname !== "/create-post" && (
-          <button onClick={handleCreatePost} className="btn btn-primary">
+          <button onClick={handleCreatePost} className="btn bg-[#F48024] text-white">
             Create Post
           </button>
         )}
         <Popover placement="bottom" content={notificationContent} trigger="click">
           <button className="btn btn-ghost btn-circle">
             <div className="indicator">
-              <IoIosNotificationsOutline />
-              <span className="badge badge-xs badge-primary indicator-item"></span>
+              <IoIosNotificationsOutline size={25}/>
+              <span className="badge badge-xs bg-[#F48024] indicator-item"></span>
             </div>
           </button>
         </Popover>
