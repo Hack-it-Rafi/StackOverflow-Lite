@@ -16,24 +16,28 @@ const Home = () => {
 
   const { data, refetch } = useGetAllPostsQuery(queryParams);
 
-  // Debounce the refetch call to limit how often it gets called
   const debouncedFetch = useCallback(
     debounce(() => {
-      setDebouncedSearch(search); // Update debouncedSearch before fetching
+      setDebouncedSearch(search); 
       refetch();
     }, 1000),
     [search, refetch]
   );
 
-  // Trigger the debounced fetch whenever search input changes
   useEffect(() => {
     debouncedFetch();
-    // Cleanup debounce effect
     return () => {
       debouncedFetch.cancel();
     };
   }, [debouncedFetch, search]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(intervalId); 
+  }, [refetch]);
 
   return (
     <div className="w-full">

@@ -37,17 +37,17 @@ const getSingleNotification = catchAsync(async (req, res) => {
   });
 });
 
-// const updateNotification = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-//   const result = await NotificationServices.updateNotificationInDB(id, req.body);
+const updateNotification = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await NotificationServices.updateNotificationInDB(id, req.body);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Notification is updated successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Notification is updated successfully',
+    data: result,
+  });
+});
 
 // const deleteNotification = catchAsync(async (req, res) => {
 //   const { id } = req.params;
@@ -67,6 +67,6 @@ export const NotificationControllers = {
   createNotification,
   getSingleNotification,
   getAllNotifications,
-//   updateNotification,
+  updateNotification,
 //   deleteNotification,
 };

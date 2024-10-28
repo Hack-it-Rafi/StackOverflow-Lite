@@ -1,24 +1,49 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Popover } from 'antd';
-import { useGetAllNotificationsQuery } from "../../redux/features/user/userAccess.api";
+import { message, Popover, Button, Divider, Typography } from "antd";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import {
+  useGetAllNotificationsQuery,
+  useUpdateNotificationsMutation,
+} from "../../redux/features/user/userAccess.api";
 import { debounce } from "lodash";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { logout, useCurrentUser } from "../../redux/features/auth/authSlice";
+
+const { Text } = Typography;
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to get the current location
-  
+  const location = useLocation();
+  const user = useAppSelector(useCurrentUser);
+  const [updateNotifications] = useUpdateNotificationsMutation();
+  const [seenNotifications, setSeenNotifications] = useState(new Set());
+  const dispatch = useAppDispatch();
+
   const handleCreatePost = () => {
     navigate(`/create-post`);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const { data, refetch } = useGetAllNotificationsQuery(undefined);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [refetch]);
 
   const debouncedFetch = useCallback(
     debounce(() => {
       refetch();
     }, 5000),
-    [ refetch]
+    [refetch]
   );
 
   useEffect(() => {
@@ -28,11 +53,32 @@ const NavBar: React.FC = () => {
     };
   }, [debouncedFetch]);
 
-  const handleRedirect = (id) => {
+  const handlePostRedirect = (id) => {
     navigate(`/post/${id}`);
   };
 
-  const content = (
+  const handleNotificationSeen = async (item) => {
+    try {
+      await updateNotifications({
+        id: item._id,
+        data: { seenUser: [...item.seenUser, user?.userId] },
+      });
+      setSeenNotifications((prev) => new Set(prev).add(item._id));
+    } catch (error) {
+      message.error("Failed to update Notification.");
+    }
+  };
+
+  const handleHomeRedirect = () => {
+    navigate(`/`);
+  };
+
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+
+  const notificationContent = (
     <div
       className="w-80 max-h-80 overflow-y-auto"
       style={{
@@ -48,16 +94,57 @@ const NavBar: React.FC = () => {
         `}
       </style>
       <div className="flex flex-col gap-3">
-        {data?.data?.map((item) => (
-          <button key={item._id} onClick={()=>{handleRedirect(item.postId._id)}}>
-            <div>
-            <span className="font-semibold">{`${item.postId.userEmail}`}</span>
-            <span> asked: </span>
-            <span className="font-semibold">{`${item.headLine}`}</span>
-            </div>
-          </button>
-        ))}
+        {data?.data
+          ?.filter(
+            (item) =>
+              !item.seenUser.includes(user?.userId) || item.isDeleted === false
+          )
+          .map((item) => (
+            <button
+              key={item._id}
+              onClick={() => {
+                if (
+                  !item.seenUser.includes(user?.userId) &&
+                  !seenNotifications.has(item._id)
+                ) {
+                  handleNotificationSeen(item);
+                }
+                handlePostRedirect(item.postId._id);
+              }}
+            >
+              <div
+                className={`py-2 ${
+                  item.seenUser.includes(user?.userId) ||
+                  seenNotifications.has(item._id)
+                    ? "bg-gray-200"
+                    : "bg-white"
+                }`}
+              >
+                <span className="font-semibold">{`${item.postId.userName}`}</span>
+                <span> asked: </span>
+                <span className="font-semibold">{`${item.headLine}`}</span>
+              </div>
+            </button>
+          ))}
       </div>
+    </div>
+  );
+
+  const userPopoverContent = (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src={user?.userImage}
+        alt="User avatar"
+        className="mx-auto"
+        style={{ width: 50, height: 50, marginBottom: 10 }}
+      />
+      <Text strong>{user?.userName}</Text>
+      <br />
+      <Text type="secondary">{user?.userEmail}</Text>
+      <Divider style={{ margin: "10px 0" }} />
+      <Button onClick={handleLogout} type="primary" danger>
+        Logout
+      </Button>
     </div>
   );
 
@@ -65,54 +152,36 @@ const NavBar: React.FC = () => {
     <div className="navbar bg-base-100 py-5">
       <div className="navbar-start">
         <div className="w-36">
-          <img className="w-full" src="/logo.png" alt="" />
+          <button onClick={handleHomeRedirect}>
+            <img className="w-full" src="/logo.png" alt="Logo" />
+          </button>
         </div>
       </div>
-      <div className="form-control"></div>
       <div className="navbar-end gap-10">
         {location.pathname !== "/create-post" && (
-          <button
-            onClick={handleCreatePost}
-            className="btn btn-primary"
-          >
+          <button onClick={handleCreatePost} className="btn btn-primary">
             Create Post
           </button>
         )}
-       
-        <Popover placement="bottom" content={content}>
+        <Popover placement="bottom" content={notificationContent} trigger="click">
           <button className="btn btn-ghost btn-circle">
-          <div className="indicator">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span className="badge badge-xs badge-primary indicator-item"></span>
-          </div>
+            <div className="indicator">
+              <IoIosNotificationsOutline />
+              <span className="badge badge-xs badge-primary indicator-item"></span>
+            </div>
           </button>
         </Popover>
-
-        <div
-          tabIndex={0}
-          role="button"
-          className="btn btn-ghost btn-circle avatar"
-        >
-          <div className="w-10 rounded-full">
-            <img
-              alt="Tailwind CSS Navbar component"
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            />
+        <Popover placement="bottom" content={userPopoverContent} trigger="click">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar"
+          >
+            <div className="w-10 rounded-full">
+              <img alt="User avatar" src={user?.userImage} />
+            </div>
           </div>
-        </div>
+        </Popover>
       </div>
     </div>
   );

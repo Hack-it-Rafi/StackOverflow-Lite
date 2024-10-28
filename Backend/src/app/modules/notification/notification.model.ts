@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { TNotification } from './notification.interface';
 
+
 const notificationSchema = new Schema<TNotification>(
   {
     headLine: {
@@ -13,6 +14,16 @@ const notificationSchema = new Schema<TNotification>(
       ref: 'Post',
       trim: true,
       required: true,
+    },
+    seenUser: [
+      {
+        type: String, 
+        trim: true,
+      },
+    ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

@@ -4,25 +4,27 @@ import sendResponse from '../../utils/sendResponse';
 import { PostServices } from './post.service';
 import { getObjectFromMinIO, uploadToMinIO } from './post.utility';
 
-
 const bucketName = 'stackoverflow-files';
-
 
 const createPost = catchAsync(async (req, res) => {
   const { file } = req;
-  if (!file) {
-    return res.status(400).json({ success: false, message: "File not found" });
-  }
-
-  // Upload file to MinIO
-  
+  let postData = null;
 
   try {
-    await uploadToMinIO(bucketName, file);
-    const postData = {
-      ...req.body,
-      fileUrl: `/${bucketName}/${file.originalname}`, 
-    };
+    if (!file) {
+      postData = req.body;
+    } else {
+      const uniqueFileName = `${Date.now()}_${file.originalname}`;
+      file.originalname = uniqueFileName
+      
+      await uploadToMinIO(bucketName, file);
+      
+      postData = {
+        ...req.body,
+        fileUrl: `/${bucketName}/${uniqueFileName}`, 
+      };
+    }
+
     const result = await PostServices.createPostIntoDB(postData);
 
     sendResponse(res, {
@@ -32,10 +34,9 @@ const createPost = catchAsync(async (req, res) => {
       data: result,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "File upload failed" });
+    res.status(500).json({ success: false, message: 'File upload failed' });
   }
 });
-
 
 const getAllPosts = catchAsync(async (req, res) => {
   const result = await PostServices.getAllPostsFromDB(req.query);
@@ -61,13 +62,12 @@ const getSinglePost = catchAsync(async (req, res) => {
 });
 
 const getPostFile = catchAsync(async (req, res) => {
-  
   const { fileName } = req.params;
   try {
-      const content = await getObjectFromMinIO(bucketName, fileName);
-      res.status(200).json({ filename: fileName, content: content });
+    const content = await getObjectFromMinIO(bucketName, fileName);
+    res.status(200).json({ filename: fileName, content: content });
   } catch (error) {
-      res.status(500).json({ message: "Could not retrieve file.", error: error.message });
+    res.status(500).json({ message: 'Could not retrieve file.', error });
   }
 });
 
@@ -75,5 +75,5 @@ export const PostControllers = {
   createPost,
   getSinglePost,
   getAllPosts,
-  getPostFile
+  getPostFile,
 };

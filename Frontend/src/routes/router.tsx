@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 
-
 import ErrorPage from "../pages/ErrorPage";
 import Home from "../pages/HomePage.tsx/Home";
 import Login from "../pages/LoginPage";
@@ -8,8 +7,7 @@ import Signup from "../pages/SignupPage";
 import App from "../App";
 import CreatePost from "../pages/CreatePost";
 import PostDetails from "../pages/PostDetails";
-
-
+import ProtectedLayout from "../components/layout/ProtectedLayout";
 
 const router = createBrowserRouter([
   {
@@ -23,13 +21,20 @@ const router = createBrowserRouter([
       },
       {
         path: "/create-post",
-        element: <CreatePost />,
+        element: (
+          <ProtectedLayout>
+            <CreatePost />,
+          </ProtectedLayout>
+        ),
       },
       {
         path: "/post/:id",
-        element: <PostDetails />,
+        element: (
+          <ProtectedLayout>
+            <PostDetails />,
+          </ProtectedLayout>
+        ),
       },
-      
     ],
   },
   {

@@ -6,5 +6,6 @@ export type TPost = {
   fileUrl: string;
   //   status: 'processing' | 'finished';
   userEmail: string;
+  userName: string;
   userId: Types.ObjectId;
 };

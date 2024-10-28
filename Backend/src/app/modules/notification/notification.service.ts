@@ -30,13 +30,13 @@ const getSingleNotificationFromDB = async (id: string) => {
   return result;
 };
 
-// const updateNotificationInDB = async (id: string, payload: Partial<TNotification>) => {
-//   const result = await Notification.findByIdAndUpdate(id, payload, {
-//     new: true,
-//     runValidators: true,
-//   });
-//   return result;
-// };
+const updateNotificationInDB = async (id: string, payload: Partial<TNotification>) => {
+  const result = await Notification.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
+};
 
 // const deleteNotificationFromDB = async (id: string) => {
 //   const result = await Notification.findByIdAndDelete(id);
@@ -47,6 +47,6 @@ export const NotificationServices = {
   createNotificationIntoDB,
   getAllNotificationsFromDB,
   getSingleNotificationFromDB,
-//   updateNotificationInDB,
+  updateNotificationInDB,
 //   deleteNotificationFromDB,
 };

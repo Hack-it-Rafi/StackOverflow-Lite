@@ -19,9 +19,12 @@ const userSchema = new Schema<TUser>(
       type: String,
       required: true,
     },
+    imageUrl: {
+      type: String,
+    },
     password: {
       type: String,
-      default: 'Ujjal123',
+      default: 'Rafi123',
       select: 0,
     },
   },

@@ -6,6 +6,7 @@ const createPostValidationSchema = z.object({
     content: z.string(),
     userEmail: z.string(),
     userId: z.string(),
+    userName: z.string(),
     // status: z.enum(['processing', 'finished']).optional(),
   }),
 });

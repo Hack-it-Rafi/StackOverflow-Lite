@@ -56,6 +56,15 @@ const userAccessApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    updateNotifications: builder.mutation({
+      query: (args) => ({
+        url: `/notification/${args.id}`,
+        method: "PATCH",
+        body: args.data,
+      }),
+      invalidatesTags: ["notifications"],
+    }),
     
   }),
 });
@@ -65,6 +74,7 @@ export const {
   useGetSinglePostQuery,
   useGetPostFileQuery,
   useGetAllNotificationsQuery,
+  useUpdateNotificationsMutation,
   useCreatePostMutation,
   
 } = userAccessApi;

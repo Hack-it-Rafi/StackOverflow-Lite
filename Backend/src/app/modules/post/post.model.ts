@@ -22,6 +22,11 @@ const postSchema = new Schema<TPost>(
       trim: true,
       required: true,
     },
+    userName: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     // status: {
     //   type: String,
     //   enum: ['processing', 'finished'],

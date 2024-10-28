@@ -6,6 +6,7 @@ export interface TUser {
   email: string;
   name: string;
   phone: string;
+  imageUrl: string;
   password: string;
 }
 

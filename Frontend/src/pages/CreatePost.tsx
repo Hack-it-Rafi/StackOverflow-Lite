@@ -4,6 +4,8 @@ import { useCreatePostMutation } from "../redux/features/user/userAccess.api";
 import { Button, message, Spin, Select } from "antd";
 import { useState } from "react";
 import { primaryButton } from "../config/themeConfig";
+import { useAppSelector } from "../redux/hooks";
+import { useCurrentUser } from "../redux/features/auth/authSlice";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -11,32 +13,52 @@ const CreatePost = () => {
   const [createPost] = useCreatePostMutation();
   const [uploadMode, setUploadMode] = useState("file");
   const [language, setLanguage] = useState("c");
+  const { userName, userEmail, userId } = useAppSelector(useCurrentUser);
+
+  console.log(userName);
 
   const handleCreatePost = async (e) => {
     setLoading(true);
     e.preventDefault();
-  
+
     const form = e.target;
-  
+
     try {
       const headLine = form.headLine.value;
       const content = form.content.value;
-      let file;
+      let file = null;
 
-      if (uploadMode === "file") {
+      // Check if file upload mode is selected and if a file is provided
+      if (uploadMode === "file" && form.file?.files?.length > 0) {
         file = form.file.files[0];
-      } else {
+      }
+      // Check if code snippet mode is selected and if content is provided
+      else if (uploadMode === "snippet" && form.codeSnippet?.value) {
         const codeContent = form.codeSnippet.value;
-        const fileExtension = language === "c" ? ".c" : language === "java" ? ".java" : ".py";
-        file = new File([codeContent], `snippet${fileExtension}`, { type: "text/plain" });
+        const fileExtension =
+          language === "c" ? ".c" : language === "java" ? ".java" : ".py";
+        file = new File([codeContent], `snippet${fileExtension}`, {
+          type: "text/plain",
+        });
       }
 
       const formData = new FormData();
       formData.append("headLine", headLine);
       formData.append("content", content);
-      formData.append("file", file);
-      formData.append("userEmail", "rafi@gmail.com");
-      formData.append("userId", "67193289b5c586eb7a18a8d3");
+
+      // Only append file if it exists
+      if (file) {
+        formData.append("file", file);
+      }
+
+      formData.append("userEmail", userEmail);
+      formData.append("userName", userName);
+      formData.append("userId", userId);
+
+      // console.log("FormData entries:");
+      // for (const [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value);
+      // }
 
       const result = await createPost(formData);
       if (result?.data.success) {
@@ -124,7 +146,6 @@ const CreatePost = () => {
               </label>
               <input
                 type="file"
-                required
                 name="file"
                 className="input input-bordered w-full"
               />
@@ -154,7 +175,6 @@ const CreatePost = () => {
                   </span>
                 </label>
                 <textarea
-                  required
                   name="codeSnippet"
                   rows={12}
                   placeholder="Type your code here"

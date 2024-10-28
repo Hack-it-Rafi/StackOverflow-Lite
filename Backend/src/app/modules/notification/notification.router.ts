@@ -15,12 +15,11 @@ router.post(
 
 router.get('/:id', NotificationControllers.getSingleNotification);
 
-// router.patch(
-//   '/:id',
-//   auth('admin', 'editor'),
-//   validateRequest(NotificationValidations.updateNotificationValidationSchema),
-//   NotificationControllers.updateNotification,
-// );
+router.patch(
+  '/:id',
+  validateRequest(NotificationValidations.updateNotificationValidationSchema),
+  NotificationControllers.updateNotification,
+);
 
 // router.delete('/:id', auth('admin'), NotificationControllers.deleteNotification);
 

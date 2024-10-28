@@ -7,7 +7,7 @@ import { createToken } from './auth.utils';
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
   const user = await User.isUserExistsByCustomId(payload.email);
-
+  // console.log(user);
   if (!user) {
     throw new AppError(404, 'This user is not found !');
   }
@@ -18,8 +18,12 @@ const loginUser = async (payload: TLoginUser) => {
   //create token and sent to the  client
 
   const jwtPayload = {
-    user: user.email,
+    userId: user._id,
+    userImage: user.imageUrl,
+    userName: user.name,
+    userEmail: user.email,
   };
+
 
   const accessToken = createToken(
     jwtPayload,
@@ -27,7 +31,6 @@ const loginUser = async (payload: TLoginUser) => {
     config.JWT_ACCESS_EXPIRES_IN as string,
   );
 
-  
 
   return {
     accessToken,
