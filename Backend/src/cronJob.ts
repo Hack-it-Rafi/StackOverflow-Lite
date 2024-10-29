@@ -7,7 +7,7 @@ cron.schedule('* * * * *', async () => {
   try {
     const cutoffDate = new Date();
     // cutoffDate.setDate(cutoffDate.getDate() - 15);
-    cutoffDate.setMinutes(cutoffDate.getMinutes() - 1);
+    cutoffDate.setMinutes(cutoffDate.getMinutes() - 5);
 
      await Notification.updateMany(
       { createdAt: { $lt: cutoffDate } },

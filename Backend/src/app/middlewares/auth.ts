@@ -20,9 +20,9 @@ const auth = () => {
         config.JWT_ACCESS_SECRET as string,
       ) as JwtPayload;
 
-      const { email } = decoded;
+      const { userEmail } = decoded;
 
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({ email: userEmail });
       if (!user) {
         throw new AppError(401, 'User not found!');
       }

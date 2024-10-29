@@ -9,7 +9,8 @@ import cookieParser from 'cookie-parser';
 // import smsRouter from './sms/smsRoutes';
 
 const corsOptions = {
-  origin: ['http://localhost:5173',],
+  // origin: ['http://localhost:5173', 'http://10.100.202.96:5173/'],
+  origin: true,
   credentials: true,
 };
 
